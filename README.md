@@ -1,4 +1,4 @@
-# Google Lens Clone
+# Google Lens
 
 A pixel-perfect clone of Google Lens's React, capacitor js, styled-components, responsiveness, animations.
 
