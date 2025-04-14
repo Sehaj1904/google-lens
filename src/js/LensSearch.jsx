@@ -1,131 +1,86 @@
-import React, { useRef } from 'react';
-import styled from 'styled-components';
-import { FaCamera, FaImage, FaMicrophone } from 'react-icons/fa';
-import { IoClose } from 'react-icons/io5';
-import { useNavigate } from 'react-router-dom';
+import React from 'react';
+import { FaArrowLeft, FaCamera, FaImage } from 'react-icons/fa';
+import { MdTranslate, MdSearch, MdSchool } from 'react-icons/md';
+import {
+  Container,
+  Header,
+  HeaderButton,
+  HeaderGroup,
+  SearchContainer,
+  SearchOption,
+  SearchOptionText,
+  SearchOptionIcon,
+  SearchGrid,
+  SearchOptionTitle,
+  SearchOptionSubtext
+} from '../styles/LensStyles';
+import { Camera, Image, Text } from '@capacitor/core';
 
-const Container = styled.div`
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-`;
-
-const Header = styled.div`
-  padding: 16px;
-  display: flex;
-  align-items: center;
-  gap: 16px;
-`;
-
-const CloseButton = styled.button`
-  background: none;
-  border: none;
-  color: #fff;
-  cursor: pointer;
-  padding: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-`;
-
-const SearchContainer = styled.div`
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
-`;
-
-const SearchBox = styled.div`
-  width: 100%;
-  max-width: 600px;
-  background: #303134;
-  border-radius: 24px;
-  padding: 12px 20px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 24px;
-  cursor: pointer;
-`;
-
-const ActionButtons = styled.div`
-  display: flex;
-  gap: 16px;
-  margin-top: 24px;
-`;
-
-const CircleButton = styled.button`
-  width: 56px;
-  height: 56px;
-  border-radius: 50%;
-  background: #303134;
-  border: none;
-  color: #fff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  
-  &:hover {
-    background: #3c4043;
-  }
-`;
-
-const HiddenInput = styled.input`
-  display: none;
-`;
-
-const LensSearch = () => {
-  const navigate = useNavigate();
-  const fileInputRef = useRef(null);
-
-  const handleImageUpload = () => {
-    fileInputRef.current?.click();
-  };
-
-  const handleFileChange = (event) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      // Handle the selected file here
-      console.log('Selected file:', file);
-    }
-  };
+const LensSearch = ({ onClose, onLensClick }) => {
+  const searchOptions = [
+    {
+      icon: <FaCamera size={24} />,
+      text: 'Search with your camera',
+      subtext: 'Take a photo to search',
+      onClick: onLensClick
+    },
+    {
+      icon: <FaImage size={24} />,
+      text: 'Search any image',
+      subtext: 'Choose a photo from your gallery',
+      onClick: () => {}
+    },
+    {
+      icon: <MdTranslate size={24} />,
+      text: 'Translate text',
+      subtext: 'Point camera at text to translate',
+      onClick: () => {}
+    },
+    {
+      icon: <MdSearch size={24} />,
+      text: 'Search text',
+      subtext: 'Point camera at text to search',
+      onClick: () => {}
+    },
+    {
+      icon: <MdSchool size={24} />,
+      text: 'Solve homework',
+      subtext: 'Get help with math & more',
+      onClick: () => {}
+    },
+  ];
 
   return (
     <Container>
       <Header>
-        <CloseButton onClick={() => navigate('/')}>
-          <IoClose size={24} />
-        </CloseButton>
-        <span>Google Lens</span>
+        <HeaderGroup>
+          <HeaderButton onClick={onClose} aria-label="Close">
+            <FaArrowLeft size={20} />
+          </HeaderButton>
+        </HeaderGroup>
       </Header>
-
+      
       <SearchContainer>
-        <SearchBox onClick={handleImageUpload}>
-          <FaImage color="#9aa0a6" />
-          <span style={{ color: '#9aa0a6' }}>Search any image</span>
-        </SearchBox>
-
-        <ActionButtons>
-          <CircleButton>
-            <FaCamera size={24} />
-          </CircleButton>
-          <CircleButton onClick={handleImageUpload}>
-            <FaImage size={24} />
-          </CircleButton>
-          <CircleButton>
-            <FaMicrophone size={24} />
-          </CircleButton>
-        </ActionButtons>
-
-        <HiddenInput
-          type="file"
-          ref={fileInputRef}
-          accept="image/*"
-          onChange={handleFileChange}
-        />
+        <SearchGrid>
+          {searchOptions.map((option, index) => (
+            <SearchOption 
+              key={index} 
+              onClick={option.onClick}
+              role="button"
+              aria-label={option.text}
+            >
+              <SearchOptionIcon>
+                {option.icon}
+              </SearchOptionIcon>
+              <div>
+                <SearchOptionText>
+                  <SearchOptionTitle>{option.text}</SearchOptionTitle>
+                  <SearchOptionSubtext>{option.subtext}</SearchOptionSubtext>
+                </SearchOptionText>
+              </div>
+            </SearchOption>
+          ))}
+        </SearchGrid>
       </SearchContainer>
     </Container>
   );
