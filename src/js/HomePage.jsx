@@ -52,10 +52,10 @@ const HomePage = () => {
           <Logo />
           <SearchBarContainer onClick={() => setShowSearch(true)}>
             <SearchBarContent>
-              <img src={'assets/icon/google-color.png'} alt="Google Search" />
+              <img src={'/icon/google-color.png'} alt="Google Search" />
               <GoogleText>Search</GoogleText>
             </SearchBarContent>
-            <img src={'assets/icon/gemini.png'} alt="gemini Search" />
+            <img src={'/icon/gemini.png'} alt="gemini Search" />
           </SearchBarContainer>
           <ProfileIcon onClick={() => setShowModal(true)}>A</ProfileIcon>
         </TopBar>
@@ -91,16 +91,16 @@ const HomePage = () => {
 
         <QuickActions>
           <ActionButton color="#fcc934">
-            <img src={'assets/icon/icon1.png'} alt="Image Search" />
+            <img src={'/icon/icon1.png'} alt="Image Search" />
           </ActionButton>
           <ActionButton color="#8ab4f8">
-            <img src={'assets/icon/icon2.png'} alt="Translate" />
+            <img src={'/icon/icon2.png'} alt="Translate" />
           </ActionButton>
           <ActionButton color="#34a853">
-            <img src={'assets/icon/icon3.png'} alt="Education" />
+            <img src={'/icon/icon3.png'} alt="Education" />
           </ActionButton>
           <ActionButton color="#ea4335">
-            <img src={'assets/icon/icon4.png'} alt="Music" />
+            <img src={'/icon/icon4.png'} alt="Music" />
           </ActionButton>
         </QuickActions>
 
@@ -126,7 +126,7 @@ const HomePage = () => {
         </InfoCards>
 
         <NewsCard>
-          <img src="assets/imgs/news.png" alt="News" />
+          <img src="/imgs/news.png" alt="News" />
           <h3>This superstar was Ratan Tata's closest friend, shared same room, went for picnics, listened songs toge...</h3>
         </NewsCard>
 
