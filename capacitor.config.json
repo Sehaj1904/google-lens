@@ -1,0 +1,13 @@
+{
+  "appId": "com.exampleme.app",
+  "appName": "google",
+  "webDir": "dist",
+  "plugins": {
+    "Camera": {
+      "permissions": ["camera"]
+    },
+    "SplashScreen": {
+      "launchAutoHide": false
+    }
+  }
+}
