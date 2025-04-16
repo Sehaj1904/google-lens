@@ -1,6 +1,8 @@
 # Google Lens
 A pixel-perfect clone of Google Lens's React, capacitor js, styled-components, responsiveness, animations.
 
+Deployed to: https://google-search-ashen-two.vercel.app/ (mweb view only)
+
 ## Features
 
 ### 1. Home Screen
