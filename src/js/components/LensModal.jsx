@@ -45,6 +45,14 @@ const LensModal = ({ show, onClose }) => {
     if (show) {
       handleSearch();
     }
+    
+      return () => {
+       if (videoRef.current && videoRef.current.srcObject) {
+         const tracks = videoRef.current.srcObject.getTracks();
+         tracks.forEach(track => track.stop());
+       }
+     };
+    
   }, [show]);
 
   const onImageLoad = (image) => {
