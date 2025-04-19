@@ -1,9 +1,11 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { FaArrowLeft, FaHistory, FaEllipsisV } from 'react-icons/fa';
 import { BiTime } from 'react-icons/bi';
 import { MdTranslate, MdSearch, MdSchool } from 'react-icons/md';
 import ReactCrop from 'react-image-crop';
 import 'react-image-crop/dist/ReactCrop.css';
+import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
+import { Capacitor } from '@capacitor/core';
 import PostSearchModal from './PostSearchModal';
 import {
   Modal,
@@ -12,7 +14,6 @@ import {
   HeaderButton,
   HeaderTitle,
   CameraView,
-  DemoImage,
   BottomBar,
   ActionRow,
   GalleryButton,
@@ -26,6 +27,7 @@ import {
 const LensModal = ({ show, onClose }) => {
   const [showPostSearch, setShowPostSearch] = useState(false);
   const [showCropper, setShowCropper] = useState(false);
+  const [capturedImage, setCapturedImage] = useState(null);
   const [crop, setCrop] = useState({
     unit: '%',
     width: 80,
@@ -37,6 +39,20 @@ const LensModal = ({ show, onClose }) => {
   const [croppedImageUrl, setCroppedImageUrl] = useState(null);
   const imageRef = useRef(null);
   const previewCanvasRef = useRef(null);
+  const videoRef = useRef(null);
+
+  useEffect(() => {
+    if (show) {
+      handleSearch();
+    }
+    return () => {
+      // Cleanup video stream when component unmounts
+      if (videoRef.current && videoRef.current.srcObject) {
+        const tracks = videoRef.current.srcObject.getTracks();
+        tracks.forEach(track => track.stop());
+      }
+    };
+  }, [show]);
 
   const onImageLoad = (image) => {
     imageRef.current = image;
@@ -86,8 +102,62 @@ const LensModal = ({ show, onClose }) => {
     });
   };
 
-  const handleSearch = () => {
+  const captureFromWebCamera = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream;
+        videoRef.current.play();
+      }
+    } catch (error) {
+      console.error('Error accessing web camera:', error);
+      onClose();
+    }
+  };
+
+  const captureWebPhoto = () => {
+    const canvas = document.createElement('canvas');
+    const video = videoRef.current;
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+    
+    // Stop the video stream
+    const tracks = video.srcObject.getTracks();
+    tracks.forEach(track => track.stop());
+    
+    const dataUrl = canvas.toDataURL('image/jpeg');
+    setCapturedImage(dataUrl);
     setShowCropper(true);
+  };
+
+  const handleSearch = async () => {
+    try {
+      if (Capacitor.isNativePlatform()) {
+        // Use Capacitor Camera for native platforms
+        const permissionStatus = await Camera.checkPermissions();
+        if (permissionStatus.camera !== 'granted') {
+          await Camera.requestPermissions();
+        }
+
+        const image = await Camera.getPhoto({
+          quality: 90,
+          allowEditing: false,
+          resultType: CameraResultType.DataUrl,
+          source: CameraSource.Camera
+        });
+
+        setCapturedImage(image.dataUrl);
+        setShowCropper(true);
+      } else {
+        // Use web camera API
+        await captureFromWebCamera();
+      }
+    } catch (error) {
+      console.error('Error capturing photo:', error);
+      onClose();
+    }
   };
 
   const handleCropComplete = async (cropObj) => {
@@ -104,6 +174,8 @@ const LensModal = ({ show, onClose }) => {
   const handleCropCancel = () => {
     setShowCropper(false);
     setCroppedImageUrl(null);
+    setCapturedImage(null);
+    onClose();
   };
 
   return (
@@ -134,7 +206,7 @@ const LensModal = ({ show, onClose }) => {
                 minHeight={100}
               >
                 <img 
-                  src="/imgs/demo.jpg" 
+                  src={capturedImage} 
                   alt="Search content"
                   onLoad={(e) => onImageLoad(e.currentTarget)}
                   style={{ 
@@ -157,15 +229,24 @@ const LensModal = ({ show, onClose }) => {
           </>
         ) : (
           <>
-            <DemoImage>
-              <img src="/imgs/demo.jpg" alt="Demo content" />
-            </DemoImage>
+            <CameraView>
+              <video
+                ref={videoRef}
+                autoPlay
+                playsInline
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'cover'
+                }}
+              />
+            </CameraView>
             <BottomBar>
               <ActionRow>
                 <GalleryButton>
                   <FaHistory size={24} />
                 </GalleryButton>
-                <SearchButton onClick={handleSearch}>
+                <SearchButton onClick={captureWebPhoto}>
                   <MdSearch size={32} color="#000" />
                 </SearchButton>
                 <div style={{ width: 48 }} />
@@ -195,8 +276,9 @@ const LensModal = ({ show, onClose }) => {
         onClose={() => {
           setShowPostSearch(false);
           setCroppedImageUrl(null);
+          setCapturedImage(null);
         }}
-        searchImage={croppedImageUrl || "/assets/imgs/news.png"}
+        searchImage={croppedImageUrl || capturedImage}
       />
     </>
   );
