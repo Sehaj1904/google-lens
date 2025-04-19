@@ -138,10 +138,10 @@ const VoiceModal = ({ show, onClose }) => {
 
       <DotsContainer>
         {isListening && <PulseCircle />}
-        <Dot color="#4285f4" delay={0} isListening={isListening} /> {/* Blue */}
-        <Dot color="#ea4335" delay={0.2} isListening={isListening} /> {/* Red */}
-        <Dot color="#fbbc05" delay={0.4} isListening={isListening} /> {/* Yellow */}
-        <Dot color="#34a853" delay={0.6} isListening={isListening} /> {/* Green */}
+        <Dot color="#4285f4" delay={0} isListening={isListening} /> 
+        <Dot color="#ea4335" delay={0.2} isListening={isListening} />
+        <Dot color="#fbbc05" delay={0.4} isListening={isListening} /> 
+        <Dot color="#34a853" delay={0.6} isListening={isListening} />
       </DotsContainer>
 
       <RecognizedText>
