@@ -45,13 +45,6 @@ const LensModal = ({ show, onClose }) => {
     if (show) {
       handleSearch();
     }
-    return () => {
-      // Cleanup video stream when component unmounts
-      if (videoRef.current && videoRef.current.srcObject) {
-        const tracks = videoRef.current.srcObject.getTracks();
-        tracks.forEach(track => track.stop());
-      }
-    };
   }, [show]);
 
   const onImageLoad = (image) => {
